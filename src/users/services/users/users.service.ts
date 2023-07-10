@@ -1,40 +1,42 @@
 import { Injectable } from '@nestjs/common';
-import { SerializedUser, User } from 'src/users/types';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/typeorm';
+import { CreateUserDto } from 'src/users/dtos/CreateUser.dto';
+import { SerializedUser } from 'src/users/types';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [
-    {
-      id: 1,
-      username: 'danny',
-      password: 'danny',
-    },
-    {
-      id: 2,
-      username: 'anson',
-      password: 'anson',
-    },
-    {
-      id: 3,
-      username: 'derek',
-      password: 'derek',
-    },
-    {
-      id: 4,
-      username: 'samantha',
-      password: 'samantha',
-    },
-  ];
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
-  getUsers() {
-    return this.users.map((user) => new SerializedUser(user));
+  async getUsers() {
+    const users = await this.userRepository.find({});
+    return users.map((user) => new SerializedUser(user));
   }
 
-  getUserByUsername(username: string) {
-    return this.users.find((user) => user.username === username);
+  async getUserByUsername(username: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        username,
+      },
+    });
+    return new SerializedUser(user);
   }
 
-  getUserById(id: number) {
-    return this.users.find((user) => user.id === id);
+  async getUserById(id: number) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id,
+      },
+    });
+    return new SerializedUser(user);
+  }
+
+  createUser(userDto: CreateUserDto) {
+    const newUser = this.userRepository.create(userDto);
+    return this.userRepository.save(newUser);
   }
 }
