@@ -43,8 +43,8 @@ export class UsersController {
   @UseInterceptors(ClassSerializerInterceptor)
   @UseFilters(new HttpExceptionFilter())
   @Get('id/:id')
-  getUserById(@Param('id', ParseIntPipe) id: number) {
-    const user = this.userService.getUserById(id);
+  async getUserById(@Param('id', ParseIntPipe) id: number) {
+    const user = await this.userService.getUserById(id);
     if (user) return user;
     else throw new UserNotFoundException();
   }

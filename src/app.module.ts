@@ -8,6 +8,7 @@ import { CustomersModule } from './customers/customers.module';
 import { LoggerMiddleware } from './logger.middleware';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
 import entities from './typeorm';
 
 @Module({
@@ -24,6 +25,7 @@ import entities from './typeorm';
       entities,
       synchronize: true,
     }),
+    AuthModule,
   ],
   controllers: [],
   providers: [],

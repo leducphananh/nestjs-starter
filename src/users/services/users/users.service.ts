@@ -23,7 +23,7 @@ export class UsersService {
         username,
       },
     });
-    return new SerializedUser(user);
+    return user ? new SerializedUser(user) : undefined;
   }
 
   async getUserById(id: number) {
@@ -32,11 +32,20 @@ export class UsersService {
         id,
       },
     });
-    return new SerializedUser(user);
+    return user ? new SerializedUser(user) : undefined;
   }
 
   createUser(userDto: CreateUserDto) {
     const newUser = this.userRepository.create(userDto);
     return this.userRepository.save(newUser);
+  }
+
+  async findUserByUsername(username: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        username,
+      },
+    });
+    return user ? new SerializedUser(user) : undefined;
   }
 }
